@@ -28,15 +28,8 @@ import org.apache.spark.util.random.XORShiftRandom
  * n_t是聚类中到目前为止的元素数量,x_t是新来的批数据的中心，m_t是当前数据批中分配到某个中心的元素数.
  *
  * a代表模型的衰变因子
- *
- * Decay can optionally be specified by a half life and associated
- * time unit. The time unit can either be a batch of data or a single
- * data point. Considering data arrived at time t, the half life h is defined
- * such that at time t + h the discount applied to the data from t is 0.5.
- * The definition remains the same whether the time unit is given
- * as batches or points.
- *
  */
+ 
 @Experimental
 class StreamingKMeansModel(
     override val clusterCenters: Array[Vector],
