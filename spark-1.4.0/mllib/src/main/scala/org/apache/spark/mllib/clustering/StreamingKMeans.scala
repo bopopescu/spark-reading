@@ -1,18 +1,5 @@
 /*
- * Licensed to the Apache Software Foundation (ASF) under one or more
- * contributor license agreements.  See the NOTICE file distributed with
- * this work for additional information regarding copyright ownership.
- * The ASF licenses this file to You under the Apache License, Version 2.0
- * (the "License"); you may not use this file except in compliance with
- * the License.  You may obtain a copy of the License at
- *
- *    http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
+ * 流式k-means算法的实现类
  */
 
 package org.apache.spark.mllib.clustering
@@ -30,30 +17,17 @@ import org.apache.spark.util.random.XORShiftRandom
 /**
  * :: Experimental ::
  *
- * StreamingKMeansModel extends MLlib's KMeansModel for streaming
- * algorithms, so it can keep track of a continuously updated weight
- * associated with each cluster, and also update the model by
- * doing a single iteration of the standard k-means algorithm.
- *
- * The update algorithm uses the "mini-batch" KMeans rule,
- * generalized to incorporate forgetfullness (i.e. decay).
- * The update rule (for each cluster) is:
- *
+ * StreamingKMeansModel是在MLlib的KMeansModel类基础上的extends, 所以可以跟踪每个聚类上不断更新的相关权重
+ * 通过标准k-means算法的每次迭代更新模型。模型通过“微批”数据更新规则如下：
  * {{{
  * c_t+1 = [(c_t * n_t * a) + (x_t * m_t)] / [n_t + m_t]
  * n_t+t = n_t * a + m_t
  * }}}
  *
- * Where c_t is the previously estimated centroid for that cluster,
- * n_t is the number of points assigned to it thus far, x_t is the centroid
- * estimated on the current batch, and m_t is the number of points assigned
- * to that centroid in the current batch.
+ * 其中，c_t是聚类先前的中心,
+ * n_t是聚类中到目前为止的元素数量,x_t是新来的批数据的中心，m_t是当前数据批中分配到某个中心的元素数.
  *
- * The decay factor 'a' scales the contribution of the clusters as estimated thus far,
- * by applying a as a discount weighting on the current point when evaluating
- * new incoming data. If a=1, all batches are weighted equally. If a=0, new centroids
- * are determined entirely by recent data. Lower values correspond to
- * more forgetting.
+ * a代表模型的衰变因子
  *
  * Decay can optionally be specified by a half life and associated
  * time unit. The time unit can either be a batch of data or a single
